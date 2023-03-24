@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+
+<style type="text/css">
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+
+.toast{
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    border-radius: 5px;
+    background: #fff;
+    padding: 10px 20px 10px 20px;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.1);
+    
+    overflow: hidden;
+    transform: translateX(calc(100% + 15px));
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+}
+
+.toast.active{
+    transform: translateX(0%);
+}
+
+.toast .toast-content{
+    display: flex;
+    align-items: center;
+}
+
+/*#4070f4*/
+.toast-content .check{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px;
+    width: 35px;
+    background-color:#008000 ;
+    color: #fff;
+    font-size: 20px;
+    border-radius: 50%;
+}
+
+.toast-content .message{
+    display: flex;
+    flex-direction: column;
+    margin: 0 20px;
+}
+
+.message .text{
+    font-size: 20px;
+    font-weight: 400;;
+    color: #666666;
+}
+
+.message .text.text-1{
+    font-weight: 600;
+    color: #333;
+}
+
+.toast .close{
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    padding: 5px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.toast .close:hover{
+    opacity: 1;
+}
+
+.toast .progress{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: #ddd;
+}
+
+/*#4070f4*/
+
+.toast .progress:before{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    background-color:#008000 ;
+}
+
+.progress.active:before{
+    animation: progress 5s linear forwards;
+}
+
+@keyframes progress {
+    100%{
+        right: 100%;
+    }
+}
+
+
+
+.toast.active ~ button{
+    pointer-events: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.card-body  h5{
+
+font-weight:800;
+
+}
+
+.card-body h3{
+
+font-weight:800;
+
+}
+
+
+</style>
+
+
+<link href="
+https://cdn.jsdelivr.net/npm/bootswatch/dist/quartz/bootstrap.min.css
+" rel="stylesheet">
+</head>
+
+<body class="d-flex flex-column">
+ 
+
+  <div class="container page-content">
+    <div class="row">    
+      <div class="col-md-4 col-lg-3">
+        <div class="card">
+          <div class="card-body text-center">
+            <h5 class="bold mb-0"  th:text= "${#strings.capitalize(user.firstName + user.lastName)}"></h5>
+            <small class="text-secondary" th:text="'Last seen '+${#dates.format(#dates.createNow(), 'MMM dd, yyyy')}"></small>       
+          </div>
+          <div class="list-group list-group-flush">
+            <a th:href="@{/my-profile}" class="list-group-item list-group-item-action active"><i data-feather="user" class="mr-3"></i> Profile</a>
+            <a th:href="@{/my-orders}" class="list-group-item list-group-item-action"><i data-feather="shopping-bag" class="mr-3"></i> Orders</a>
+            <a th:href="@{/my-address}" class="list-group-item list-group-item-action"><i data-feather="map" class="mr-3"></i> Address</a>
+                        <a th:href="@{/track_order}" class="list-group-item list-group-item-action" ><i data-feather="map" class="mr-3"></i>Track Order</a>           
+            
+            <a th:href="@{/logout}" class="list-group-item list-group-item-action text-danger"><i data-feather="log-out" class="mr-3"></i> Logout</a>
+          </div>
+        </div>
+      </div>
+      
+       <div class="col mt-3 mt-md-0">
+          <div th:if="${updateSuccess}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Profile updated!</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div th:if="${incorrectPassword}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Incorrect password</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+              
+          <div class="card">
+            <div class="card-body">
+              <h3>My Profile</h3><hr>
+              <form id="profileForm" th:action="@{/update-user-info}" th:object="${user}" novalidate method="post">
+                <div class="form-row">
+                  <div class="form-group col-sm-6">
+                    <label for="firstName">First Name</label>                        
+                    <input type="text" class="form-control" 
+                                id="firstName" th:name="firstName" th:value="${user.firstName}" >                   
+                  </div>                  
+                  <div class="form-group col-sm-6">
+                    <label for="lastName">Last Name</label>                        
+                    <input type="text" class="form-control" 
+                                id="lastName" th:name="lastName" th:value="${user.lastName}">
+                  </div>
+                  
+                   <div class="form-group col-sm-6">
+                    <label for="lastName">Mobile Number</label>                        
+                    <input type="text" class="form-control" 
+                                id="number" th:name="number" th:value="${user.number}">
+                  </div>
+                  
+                  <div class="form-group col-sm-6">
+                    <label for="email">Email address</label>
+                    <input required="required" type="text" class="form-control" th:classappend="${emailExists} ? is-invalid"
+                                id="email" th:name="email" th:value="${user.email}">
+                    <div class="invalid-feedback">Email already used by an existing account.</div>
+                  </div>
+                  <div class="form-group col-sm-6">
+                    <label for="txtNewPassword">New password</label>
+                    <input type="password" class="form-control" 
+                                id="txtNewPassword" name="newPassword" autocomplete="new-password">
+                  </div>
+                  <div class="form-group col-sm-6">                
+                    <label for="txtConfirmPassword">Confirm password</label>
+                    <input type="password" class="form-control" 
+                                id="txtConfirmPassword" >
+                    <div class="invalid-feedback">Passwords do not match</div>                                
+                  </div>
+                  
+                 <div class="toast">
+        <div class="toast-content">
+            <i class="fas fa-solid fa-check check"></i>
+
+            <div class="message">
+                <span class="text text-1">Success</span>
+                <span class="text text-2">you have successfully logged in!</span>
+            </div>
+        </div>
+        <i class="fa-solid fa-xmark close"></i>
+
+        <div class="progress"></div>
+    </div>
+                  
+                  
+                  <div class="form-group col-12">                
+                    <button id="updateUserInfoButton" type="button" class="btn btn-primary">UPDATE PROFILE</button>
+                  </div>
+                </div>
+                
+                <!--  password check modal -->
+                <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Type your current password</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                         <input type="password" class="form-control" id="password" name="password">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="fa-solid fa-xmark close" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                      </div>
+                    </div>
+                  </div>
+                </div> 
+                <!--  /password check modal -->                
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+
+  </div> <!--  end container -->
+  
+ <script >
+    
+
+    const button = document.querySelector("button"),
+     toast = document.querySelector(".toast")
+     closeIcon = document.querySelector(".close"),
+      progress = document.querySelector(".progress");
+
+      let timer1, timer2;
+
+      button.addEventListener("click", () => {
+        toast.classList.add("active");
+        progress.classList.add("active");
+
+        timer1 = setTimeout(() => {
+            toast.classList.remove("active");
+        }, 5000); //1s = 1000 milliseconds
+
+        timer2 = setTimeout(() => {
+          progress.classList.remove("active");
+        }, 5300);
+      });
+      
+      closeIcon.addEventListener("click", () => {
+        toast.classList.remove("active");
+        
+        setTimeout(() => {
+          progress.classList.remove("active");
+        }, 300);
+
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      });
+</script>
+  
+  <script>
+   	function checkPasswordMatch() {
+ 		var password = $("#txtNewPassword").val();
+ 		var confirmPassword = $("#txtConfirmPassword").val();
+ 		if (password == "" && confirmPassword == "") {
+ 			$("#updateUserInfoButton").attr("disabled", false);
+ 		} else {
+ 			if (password != confirmPassword) {
+ 				$("#updateUserInfoButton").attr("disabled", true);				
+ 				$("#txtConfirmPassword").addClass("is-invalid");
+ 			} else {
+ 				$("#updateUserInfoButton").attr("disabled", false);
+ 				$("#txtConfirmPassword").removeClass("is-invalid");
+ 			}
+ 		}		
+ 	}
+    
+   	$(document).ready(function(){
+   		$("#txtConfirmPassword").keyup(checkPasswordMatch);
+   		$("#txtNewPassword").keyup(checkPasswordMatch);
+     	$('#updateUserInfoButton').click(function() {
+     		console.log("clickeo")
+     		if ($('#txtNewPassword').val() == '') {   
+     			$('#profileForm').submit()    		
+     		} else {
+     			$('#passwordModal').modal('show');
+     		}
+    	 });
+     });
+  	
+
+
+  </script>
+</body>
+</html>

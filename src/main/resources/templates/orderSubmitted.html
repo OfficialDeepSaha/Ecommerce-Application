@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org./1999/xhtml">
+<head><link href="https://fonts.googleapis.com/css?family=Nunito|Roboto|Roboto+Condensed|Roboto+Slab" rel="stylesheet">  
+  <!-- Bootstrap core CSS -->
+  <link href="/style/bootstrap.min.css" rel="stylesheet">  
+  <!-- Tables plugin -->
+  <link href="/style/datatables.min.css" rel="stylesheet">  
+  <!-- Bootstrap tagsinput -->
+  <link href="/style/tagsinput.css" rel="stylesheet">  
+  <!-- Simple pagination -->
+  <link href="/style/simplePagination.css" rel="stylesheet" />  
+  <!-- Slick carousel -->  
+  <link href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet" />      
+  <link href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet" />      
+  <!-- Custom styles -->
+  <link href="/style/style.css" rel="stylesheet">
+    <!-- Feather icons -->
+  <script src="https://unpkg.com/feather-icons"></script>  </head>
+
+<body class="d-flex flex-column">
+  
+  <div class="container page-content">
+    <div class="card">
+      <div class="card-body">
+        <div class="text-center py-3">
+          <i data-feather="check-circle" class="text-success" width="48" height="48"></i>
+          <h1>Thank you.</h1>
+          <p>Your order has been placed and will be processed as soon as possible.</p>
+          <p class="mb-0">
+            <span class="text-muted">Order ID: </span>
+            <span class="text-info">#ORD<span th:text="${order.id}"></span></span>
+          </p>
+          <p>
+            <span class="text-muted">Amount: </span>
+            <span class="text-info">$ <span th:text="${order.orderTotal}"></span></span>
+          </p>
+          <p>The estimated delivery date is <span th:text="${#dates.format(order.shippingDate, 'dd-MMM-yyyy')}"></span></p>
+          <a th:href="@{/store}" class="btn btn-info rounded mb-3">CONTINUE SHOPPING</a>
+          <a th:href="@{/order-detail?order=}+${order.id}" class="btn btn-primary rounded mb-3">VIEW ORDER</a>
+        </div>
+      </div>
+    </div>  
+  </div> <!-- end container -->
+  
+  
+</body>
+</html>
